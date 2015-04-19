@@ -1,5 +1,8 @@
 package at.eht.stream;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * @author Markus Deutsch
  */
@@ -8,8 +11,13 @@ public class Sample {
     private int x;
     private int y;
     private int z;
+    private int verticalAcceleration;
 
     public Sample() {
+    }
+
+    public Sample(int verticalAcceleration){
+        this.verticalAcceleration = verticalAcceleration;
     }
 
     public Sample(int x, int y, int z) {
@@ -43,7 +51,30 @@ public class Sample {
         this.z = z;
     }
 
+    public int getVerticalAcceleration() {
+        return verticalAcceleration;
+    }
+
+    public void setVerticalAcceleration(int verticalAcceleration) {
+        this.verticalAcceleration = verticalAcceleration;
+    }
+
     public String toString(){
-        return x+","+y+","+z;
+        return x+","+y+","+z+","+ verticalAcceleration;
+    }
+
+    public JSONObject toJSON(){
+        JSONObject json = new JSONObject();
+        try {
+            json.put("x", x);
+            json.put("y", y);
+            json.put("z", z);
+            json.put("v", verticalAcceleration);
+        } catch (JSONException e){
+            // JSONException can only happen if one of the keys is null. (So never.)
+            throw new RuntimeException(e);
+        }
+
+        return json;
     }
 }
