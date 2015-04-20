@@ -40,7 +40,6 @@ public class MainActivity extends ActionBarActivity {
     private final static int NUMBER_PARAMETERS = 3;
     private final static String LOG_TAG = "Accel Streamer";
 
-    private SampleCollection collection;
     private PebbleKit.PebbleDataReceiver pebbleDataReceiver;
     private TextView tvStatus;
     private int count;
@@ -50,7 +49,7 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         tvStatus = (TextView) findViewById(R.id.tvStatus);
-        ((TextView) findViewById(R.id.tvMaxNumber)).setText(getString(R.string.retention, SampleCollection.MAX_RETENTION_COUNT));
+        ((TextView) findViewById(R.id.tvMaxNumber)).setText(getString(R.string.retention, Integer.MAX_VALUE));
 
         if(savedInstanceState != null && savedInstanceState.containsKey("COUNT")){
             count = savedInstanceState.getInt("COUNT", 0);
@@ -61,8 +60,6 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-        collection = SampleCollection.getInstance();
 
         pebbleDataReceiver = new PebbleKit.PebbleDataReceiver(PEBBLE_UUID) {
             @Override
@@ -85,7 +82,18 @@ public class MainActivity extends ActionBarActivity {
                     count++;
                 }
 
-                collection.insert(samples);
+                SampleBatch batch = new SampleBatch(samples);
+                new RequestPosterTask().execute(new SubmitBatchRequest(new OnRequestCompleted() {
+                    @Override
+                    public void onSuccess(Response response) {
+
+                    }
+
+                    @Override
+                    public void onError(Response response) {
+
+                    }
+                }, batch));
                 updateCount();
 
                 /*
@@ -118,9 +126,9 @@ public class MainActivity extends ActionBarActivity {
             File outputFile = new File(dir.getAbsolutePath(), String.valueOf("accel-"+new Date().getTime()) + ".csv");
             Log.i(LOG_TAG, "Saving output to " + outputFile.getAbsolutePath());
             FileOutputStream outputStream = new FileOutputStream(outputFile);
-            for (Sample sample : collection.getSnapshot()) {
-                outputStream.write((sample.toString()+"\n").getBytes());
-            }
+            //for (Sample sample : collection.getSnapshot()) {
+            //    outputStream.write((sample.toString()+"\n").getBytes());
+            //}
             outputStream.close();
             Toast.makeText(this, "Export finished.", Toast.LENGTH_SHORT).show();
         } catch (IOException e){

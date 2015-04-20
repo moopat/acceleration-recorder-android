@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /**
@@ -16,7 +17,7 @@ import java.util.TimeZone;
  */
 public class SampleBatch {
 
-    private static SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+    private static SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.getDefault());
 
     static {
         dateFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));

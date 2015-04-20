@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Pebble Accel Stream</string>
+    <string name="app_name">Acceleration Recorder</string>
     <string name="empty">No samples have been received.</string>
     <string name="count">%s samples received.</string>
     <string name="action_export">Export Data</string>
