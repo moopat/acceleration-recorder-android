@@ -70,5 +70,7 @@ public class AccelerationDataReceiverService extends Service {
                 SampleBatchDAO.insert(batch);
             }
         };
+
+        PebbleKit.registerReceivedDataHandler(this, accelerationReceiver);
     }
 }

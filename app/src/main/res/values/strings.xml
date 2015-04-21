@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">Acceleration Recorder</string>
-    <string name="empty">No samples have been received.</string>
-    <string name="count">%s samples received.</string>
+    <string name="samplecount">0</string>
+    <string name="samplecount_description">Sample Batches in the Database</string>
+    <string name="upload_progress">%1$d%% uploaded (%2$d of %3$d)</string>
+    <string name="upload_progress_none">Upload has not started</string>
     <string name="action_export">Export Data</string>
-    <string name="retention">Only the last %d samples are kept in memory.</string>
+    <string name="label_upload">Upload Data</string>
 </resources>

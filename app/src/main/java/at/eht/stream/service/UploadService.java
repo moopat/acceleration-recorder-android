@@ -59,17 +59,23 @@ public class UploadService extends Service {
 
     private void uploadNext(){
         SampleBatch sampleBatch = SampleBatchDAO.findNext();
-        if(sampleBatch == null){
+        if(sampleBatch == null || numberOfTransmissions >= numberOfTotalUploads){
             stopSelf();
+            return;
         }
 
         new RequestPosterTask().execute(new SubmitBatchRequest(new OnRequestCompleted() {
             @Override
             public void onSuccess(Response response) {
-                Log.d(LOG_TAG, "Successfully transmitted batch: " + ((SubmitBatchResponse) response).getBatchId());
-                errorCount = 0;
-                numberOfTransmissions++;
-                sendDataUpdatedBroadcast();
+                SubmitBatchResponse batchResponse = (SubmitBatchResponse) response;
+                Log.d(LOG_TAG, "Successfully transmitted batch: " + batchResponse.getBatchId());
+                if(SampleBatchDAO.deleteByHash(batchResponse.getBatchId())){
+                    errorCount = 0;
+                    numberOfTransmissions++;
+                    sendDataUpdatedBroadcast();
+                } else {
+                    errorCount++;
+                }
                 uploadNext();
             }
 

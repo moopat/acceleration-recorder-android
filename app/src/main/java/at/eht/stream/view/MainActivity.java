@@ -1,6 +1,9 @@
 package at.eht.stream.view;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -8,10 +11,10 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.getpebble.android.kit.PebbleKit;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,6 +24,7 @@ import java.util.Date;
 import at.eht.stream.R;
 import at.eht.stream.database.SampleBatchDAO;
 import at.eht.stream.service.AccelerationDataReceiverService;
+import at.eht.stream.service.UploadService;
 
 /**
  * @author Markus Deutsch
@@ -29,20 +33,36 @@ public class MainActivity extends ActionBarActivity {
 
     private final static String LOG_TAG = "MainActivity";
 
-    private TextView tvStatus;
+    private TextView tvSampleCount, tvProgressDescription;
+    private ProgressBar pbProgress;
     private int count;
+
+    private BroadcastReceiver dataUploadedReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        tvStatus = (TextView) findViewById(R.id.tvStatus);
-        ((TextView) findViewById(R.id.tvMaxNumber)).setText(getString(R.string.retention, Integer.MAX_VALUE));
+        tvSampleCount = (TextView) findViewById(R.id.tvSampleCount);
+        SampleBatchDAO.init(this);
 
         if(savedInstanceState != null && savedInstanceState.containsKey("COUNT")){
             count = savedInstanceState.getInt("COUNT", 0);
-            updateCount();
+        } else {
+            count = (int) SampleBatchDAO.getNumberOfBatches();
         }
+
+        pbProgress = (ProgressBar) findViewById(R.id.pbProgress);
+        tvProgressDescription = (TextView) findViewById(R.id.tvProgressDescription);
+
+        updateCount();
+
+        findViewById(R.id.btnUpload).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startService(new Intent(MainActivity.this, UploadService.class));
+            }
+        });
     }
 
     @Override
@@ -52,16 +72,28 @@ public class MainActivity extends ActionBarActivity {
         Intent pebbleServiceIntent = new Intent(this, AccelerationDataReceiverService.class);
         startService(pebbleServiceIntent);
 
-        SampleBatchDAO.init(this);
+        setupDataUploadedReceiver();
     }
 
     public void updateCount(){
         new Handler().post(new Runnable() {
             @Override
             public void run() {
-                tvStatus.setText(getString(R.string.count, String.valueOf(count)));
+                tvSampleCount.setText(String.valueOf(count));
             }
         });
+    }
+
+    public void updateProgress(long total, long current){
+        int progress = total == 0 ? 0 : getPercentage(total, current);
+        tvSampleCount.setText(String.valueOf(total - current));
+        tvProgressDescription.setText(getString(R.string.upload_progress, progress, current, total));
+        pbProgress.setMax((int) total);
+        pbProgress.setProgress((int) current);
+    }
+
+    public int getPercentage(long total, long current){
+        return (int) (((float) current / (float) total) * 100);
     }
 
     public void exportData(){
@@ -85,6 +117,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        unregisterReceiver(dataUploadedReceiver);
     }
 
     @Override
@@ -110,5 +143,18 @@ public class MainActivity extends ActionBarActivity {
     protected void onSaveInstanceState(Bundle outState) {
         outState.putInt("COUNT", count);
         super.onSaveInstanceState(outState);
+    }
+
+    private void setupDataUploadedReceiver(){
+        dataUploadedReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                updateProgress(
+                        intent.getLongExtra(UploadService.KEY_TOTAL, 0),
+                        intent.getLongExtra(UploadService.KEY_CURRENT, 0)
+                );
+            }
+        };
+        registerReceiver(dataUploadedReceiver, new IntentFilter(UploadService.ACTION_DATAUPLOADED));
     }
 }
