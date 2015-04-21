@@ -3,7 +3,9 @@ package at.eht.stream.database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,6 +73,31 @@ public class SampleBatchDAO {
         return batch;
     }
 
+    public static SampleBatch findNext(){
+        Cursor cursor = null;
+        SQLiteDatabase db = DatabaseOpenHelper.getInstance(context).getReadableDatabase();
+        SampleBatch batch = null;
+
+        cursor = db.query(
+                TABLE_NAME,
+                new String[]{FIELD_SAMPLES},
+                null,
+                null,
+                null,
+                null,
+                FIELD_TIMESTAMP + " ASC",
+                "1");
+
+        if(cursor.getCount() == 1){
+            int samplesIndex = cursor.getColumnIndex(FIELD_SAMPLES);
+            cursor.moveToFirst();
+            batch = new SampleBatch(cursor.getString(samplesIndex));
+            cursor.close();
+        }
+
+        return batch;
+    }
+
     public static List<SampleBatch> readAll() {
         Cursor cursor = null;
         SQLiteDatabase db = DatabaseOpenHelper.getInstance(context).getReadableDatabase();
@@ -110,5 +137,10 @@ public class SampleBatchDAO {
     public static boolean deleteByHash(String hash){
         SQLiteDatabase db = DatabaseOpenHelper.getInstance(context).getWritableDatabase();
         return db.delete(TABLE_NAME, FIELD_HASH + "=?", new String[]{hash}) == 1;
+    }
+
+    public static long getNumberOfBatches(){
+        SQLiteDatabase db = DatabaseOpenHelper.getInstance(context).getReadableDatabase();
+        return DatabaseUtils.queryNumEntries(db, TABLE_NAME);
     }
 }

@@ -47,7 +47,7 @@ public class SampleBatch {
             for(int i = 0; i < jsonSamples.length(); i++){
                 samples[i] = new Sample(jsonSamples.getJSONObject(i));
             }
-            generateHash();
+            //generateHash(); Don't regenerate hash because the implementation might change.
         } catch (JSONException e) {
             throw new InstantiationError("Error inflating SampleBatch from JSON: " + jsonString);
         }
