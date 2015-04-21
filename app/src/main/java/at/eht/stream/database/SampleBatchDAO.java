@@ -47,6 +47,30 @@ public class SampleBatchDAO {
         return successful > -1;
     }
 
+    public static SampleBatch findByHash(String hash){
+        Cursor cursor = null;
+        SQLiteDatabase db = DatabaseOpenHelper.getInstance(context).getReadableDatabase();
+        SampleBatch batch = null;
+
+        cursor = db.query(
+                TABLE_NAME,
+                new String[]{FIELD_SAMPLES},
+                FIELD_HASH + "=?",
+                new String[]{hash},
+                null,
+                null,
+                null);
+
+        if(cursor.getCount() == 1){
+            int samplesIndex = cursor.getColumnIndex(FIELD_SAMPLES);
+            cursor.moveToFirst();
+            batch = new SampleBatch(cursor.getString(samplesIndex));
+            cursor.close();
+        }
+
+        return batch;
+    }
+
     public static List<SampleBatch> readAll() {
         Cursor cursor = null;
         SQLiteDatabase db = DatabaseOpenHelper.getInstance(context).getReadableDatabase();
@@ -72,13 +96,7 @@ public class SampleBatchDAO {
             }
 
         } finally {
-
-            try {
-                cursor.close();
-                //db.close();
-            } catch (Exception e){
-
-            }
+            if(cursor != null) cursor.close();
         }
 
         return all;
@@ -86,19 +104,11 @@ public class SampleBatchDAO {
 
     public static void deleteAll() {
         SQLiteDatabase db = DatabaseOpenHelper.getInstance(context).getWritableDatabase();
-        try
-        {
-            db.beginTransaction();
-            String delete = String.format("DELETE FROM %s;", TABLE_NAME);
-            db.execSQL(delete);
+        db.delete(TABLE_NAME, null, null);
+    }
 
-            db.setTransactionSuccessful();
-        }
-        finally
-        {
-            db.endTransaction();
-            //db.close();
-        }
-
+    public static boolean deleteByHash(String hash){
+        SQLiteDatabase db = DatabaseOpenHelper.getInstance(context).getWritableDatabase();
+        return db.delete(TABLE_NAME, FIELD_HASH + "=?", new String[]{hash}) == 1;
     }
 }
