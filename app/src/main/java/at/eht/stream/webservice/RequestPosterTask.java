@@ -1,4 +1,4 @@
-package at.eht.stream;
+package at.eht.stream.webservice;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -14,6 +14,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+
+import at.eht.stream.Config;
 
 /**
  * @author Markus Deutsch
@@ -32,15 +34,14 @@ public class RequestPosterTask extends AsyncTask<Request, Void, Response> {
             URL connectionUrl = new URL(String.format(Config.WEBSERVICE_LINK, request.getServiceName()));
             HttpURLConnection urlConnection = (HttpURLConnection) connectionUrl.openConnection();
 
-            Log.d("RequestPosterTask", "Posting to " + connectionUrl.getPath());
-            Log.d("RequestPosterTask", request.getRequest());
-
-
             urlConnection.setReadTimeout(10000);
             urlConnection.setConnectTimeout(5000);
             urlConnection.setRequestMethod("POST");
             urlConnection.setDoInput(true);
             urlConnection.setDoOutput(true);
+
+            Log.d("RequestPosterTask", urlConnection.getRequestMethod() + " " + urlConnection.getURL().toString());
+            Log.d("RequestPosterTask", request.getRequest());
 
             OutputStream outStream = urlConnection.getOutputStream();
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outStream, "UTF-8"));

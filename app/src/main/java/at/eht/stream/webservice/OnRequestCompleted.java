@@ -1,4 +1,4 @@
-package at.eht.stream;
+package at.eht.stream.webservice;
 
 /**
  * @author Markus Deutsch

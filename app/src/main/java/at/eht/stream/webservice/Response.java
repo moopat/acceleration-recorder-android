@@ -1,4 +1,4 @@
-package at.eht.stream;
+package at.eht.stream.webservice;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,5 +49,9 @@ public class Response {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public boolean isSuccess(){
+        return result != null && result.equalsIgnoreCase("OK");
     }
 }

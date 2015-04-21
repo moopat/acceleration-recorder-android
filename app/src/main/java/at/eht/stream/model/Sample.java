@@ -1,4 +1,4 @@
-package at.eht.stream;
+package at.eht.stream.model;
 
 import org.json.JSONException;
 import org.json.JSONObject;

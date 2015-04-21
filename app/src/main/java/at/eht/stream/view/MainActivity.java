@@ -1,4 +1,4 @@
-package at.eht.stream;
+package at.eht.stream.view;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -19,6 +19,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.UUID;
+
+import at.eht.stream.webservice.OnRequestCompleted;
+import at.eht.stream.R;
+import at.eht.stream.webservice.RequestPosterTask;
+import at.eht.stream.webservice.Response;
+import at.eht.stream.model.Sample;
+import at.eht.stream.model.SampleBatch;
+import at.eht.stream.webservice.SubmitBatchRequest;
+import at.eht.stream.webservice.SubmitBatchResponse;
 
 /**
  * MainActivity receives acceleration data from Pebble and saves it in the form of Samples
@@ -86,7 +95,7 @@ public class MainActivity extends ActionBarActivity {
                 new RequestPosterTask().execute(new SubmitBatchRequest(new OnRequestCompleted() {
                     @Override
                     public void onSuccess(Response response) {
-
+                        Log.d("MainActivity", "Successfully transmitted batch: " + ((SubmitBatchResponse) response).getBatchId());
                     }
 
                     @Override

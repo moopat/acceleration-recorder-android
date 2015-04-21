@@ -1,4 +1,4 @@
-package at.eht.stream;
+package at.eht.stream.model;
 
 import android.util.Log;
 
@@ -11,6 +11,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import at.eht.stream.Util;
 
 /**
  * @author Markus Deutsch
