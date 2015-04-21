@@ -35,6 +35,25 @@ public class SampleBatch {
         generateHash();
     }
 
+    public SampleBatch(String jsonString) {
+        JSONObject json = null;
+        try {
+            json = new JSONObject(jsonString);
+            this.hash = json.getString("hash");
+            this.timestamp = json.getString("timestamp");
+
+            JSONArray jsonSamples = json.getJSONArray("samples");
+            this.samples = new Sample[jsonSamples.length()];
+            for(int i = 0; i < jsonSamples.length(); i++){
+                samples[i] = new Sample(jsonSamples.getJSONObject(i));
+            }
+            generateHash();
+        } catch (JSONException e) {
+            throw new InstantiationError("Error inflating SampleBatch from JSON: " + jsonString);
+        }
+
+    }
+
     public Sample[] getSamples() {
         return samples;
     }

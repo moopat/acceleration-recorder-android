@@ -26,6 +26,17 @@ public class Sample {
         this.z = z;
     }
 
+    public Sample(JSONObject sampleAsJson){
+        try {
+            x = sampleAsJson.getInt("x");
+            y = sampleAsJson.getInt("y");
+            z = sampleAsJson.getInt("z");
+            verticalAcceleration = sampleAsJson.getInt("v");
+        } catch (JSONException e) {
+            throw new InstantiationError("Error inflating Sample: " + sampleAsJson.toString());
+        }
+    }
+
     public int getX() {
         return x;
     }
