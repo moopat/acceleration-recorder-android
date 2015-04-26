@@ -6,4 +6,7 @@
     <string name="upload_progress_none">Upload has not started</string>
     <string name="action_export">Export Data</string>
     <string name="label_upload">Upload Data</string>
+    <string name="placeholder_datasetname">Name of Dataset</string>
+    <string name="label_adduid">+ Unique ID</string>
+    <string name="label_save">Save</string>
 </resources>

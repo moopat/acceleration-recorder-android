@@ -16,4 +16,11 @@ public class Util {
         //return new String(messageDigest.digest());
         return UUID.randomUUID().toString();
     }
+
+    public static String getRandomString(){
+        // Return only the first segment of a random UUID
+        // b948dfb3-c0ba-4881-a67a-d326ae13a3fa would return b948dfb3
+        String baseString = UUID.randomUUID().toString();
+        return baseString.substring(0, baseString.indexOf("-"));
+    }
 }

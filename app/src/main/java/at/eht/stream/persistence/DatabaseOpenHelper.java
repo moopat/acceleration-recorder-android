@@ -1,10 +1,10 @@
-package at.eht.stream.database;
+package at.eht.stream.persistence;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import static at.eht.stream.database.SampleBatchDAO.*;
+import static at.eht.stream.persistence.SampleBatchDAO.*;
 
 /**
  * @author Markus Deutsch

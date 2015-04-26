@@ -17,4 +17,5 @@ public class Config {
     public final static int COMMAND_DATA = 1;
     public final static int NUMBER_SAMPLES = 25;
     public final static int NUMBER_PARAMETERS = 1;
+    public final static int SAMPLERATE = 25;
 }

@@ -10,7 +10,7 @@ import com.getpebble.android.kit.PebbleKit;
 import com.getpebble.android.kit.util.PebbleDictionary;
 
 import at.eht.stream.Config;
-import at.eht.stream.database.SampleBatchDAO;
+import at.eht.stream.persistence.SampleBatchDAO;
 import at.eht.stream.model.Sample;
 import at.eht.stream.model.SampleBatch;
 
@@ -59,7 +59,7 @@ public class AccelerationDataReceiverService extends Service {
                 Sample[] samples = new Sample[Config.NUMBER_SAMPLES];
 
                 for(int i = 0; i < Config.NUMBER_SAMPLES; i++){
-                    int verticalAcceleration = pebbleTuples.getInteger(i * Config.NUMBER_PARAMETERS + 0 + 1).intValue();
+                    int verticalAcceleration = pebbleTuples.getUnsignedIntegerAsLong(i * Config.NUMBER_PARAMETERS + 0 + 1).intValue();
                     samples[i] = new Sample(verticalAcceleration);
                 }
 

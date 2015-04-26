@@ -5,7 +5,8 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
-import at.eht.stream.database.SampleBatchDAO;
+import at.eht.stream.persistence.DatasetMetadataManager;
+import at.eht.stream.persistence.SampleBatchDAO;
 import at.eht.stream.model.SampleBatch;
 import at.eht.stream.webservice.OnRequestCompleted;
 import at.eht.stream.webservice.RequestPosterTask;
@@ -88,7 +89,7 @@ public class UploadService extends Service {
                     stopSelf();
                 }
             }
-        }, sampleBatch));
+        }, sampleBatch, DatasetMetadataManager.getInstance(this).getDatasetTitle()));
 
     }
 

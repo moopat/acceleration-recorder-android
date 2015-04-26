@@ -12,6 +12,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,7 +24,9 @@ import java.io.IOException;
 import java.util.Date;
 
 import at.eht.stream.R;
-import at.eht.stream.database.SampleBatchDAO;
+import at.eht.stream.Util;
+import at.eht.stream.persistence.DatasetMetadataManager;
+import at.eht.stream.persistence.SampleBatchDAO;
 import at.eht.stream.service.AccelerationDataReceiverService;
 import at.eht.stream.service.UploadService;
 
@@ -34,6 +38,8 @@ public class MainActivity extends ActionBarActivity {
     private final static String LOG_TAG = "MainActivity";
 
     private TextView tvSampleCount, tvProgressDescription;
+    private EditText etDatasetName;
+    private Button btnUuid, btnSave;
     private ProgressBar pbProgress;
     private int count;
 
@@ -54,6 +60,9 @@ public class MainActivity extends ActionBarActivity {
 
         pbProgress = (ProgressBar) findViewById(R.id.pbProgress);
         tvProgressDescription = (TextView) findViewById(R.id.tvProgressDescription);
+        etDatasetName = (EditText) findViewById(R.id.etDataSetName);
+        btnSave = (Button) findViewById(R.id.btnSave);
+        btnUuid = (Button) findViewById(R.id.btnAddUid);
 
         updateCount();
 
@@ -61,6 +70,31 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 startService(new Intent(MainActivity.this, UploadService.class));
+            }
+        });
+
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatasetMetadataManager.getInstance(MainActivity.this).
+                        setDatasetTitle(etDatasetName.getText().toString());
+            }
+        });
+
+        btnUuid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String currentText = etDatasetName.getText().toString();
+                String randomString = Util.getRandomString();
+
+                if(currentText.lastIndexOf("-") > -1){
+                    currentText = currentText.substring(0, currentText.lastIndexOf("-") + 1);
+                } else {
+                    currentText = currentText + "-";
+                }
+
+                currentText = currentText + randomString;
+                etDatasetName.setText(currentText);
             }
         });
     }
@@ -73,6 +107,7 @@ public class MainActivity extends ActionBarActivity {
         startService(pebbleServiceIntent);
 
         setupDataUploadedReceiver();
+        etDatasetName.setText(DatasetMetadataManager.getInstance(this).getDatasetTitle());
     }
 
     public void updateCount(){

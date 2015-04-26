@@ -13,6 +13,7 @@ public abstract class Request {
 
     public Request(OnRequestCompleted callback){
         this.callback = callback;
+        requestJson = new JSONObject();
     }
 
     protected abstract String getServiceName();
