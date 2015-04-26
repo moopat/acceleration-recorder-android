@@ -59,11 +59,8 @@ public class AccelerationDataReceiverService extends Service {
                 Sample[] samples = new Sample[Config.NUMBER_SAMPLES];
 
                 for(int i = 0; i < Config.NUMBER_SAMPLES; i++){
-                    Sample sample = new Sample();
-                    sample.setX(pebbleTuples.getInteger(i * Config.NUMBER_PARAMETERS + 0 + 1).intValue());
-                    sample.setY(pebbleTuples.getInteger(i * Config.NUMBER_PARAMETERS + 1 + 1).intValue());
-                    sample.setZ(pebbleTuples.getInteger(i * Config.NUMBER_PARAMETERS + 2 + 1).intValue());
-                    samples[i] = sample;
+                    int verticalAcceleration = pebbleTuples.getInteger(i * Config.NUMBER_PARAMETERS + 0 + 1).intValue();
+                    samples[i] = new Sample(verticalAcceleration);
                 }
 
                 SampleBatch batch = new SampleBatch(samples);
