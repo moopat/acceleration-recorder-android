@@ -69,16 +69,23 @@ public class SampleBatch {
     private void generateHash(){
         StringBuilder sb = new StringBuilder();
         for (Sample sample : samples) {
-            sb.append(sb.toString());
+            sb.append(sample.toString());
         }
         sb.append(timestamp);
+        hash = Util.getSHA256(sb.toString());
+    }
 
-        try{
-            hash = Util.getSHA256(sb.toString());
-        } catch (NoSuchAlgorithmException e) {
-            Log.e("SampleBatch", e.getMessage());
-            hash = sb.toString().substring(0, Math.min(64, sb.toString().length()));
+    /**
+     * Get a fingerprint of the Batch which ignores the timestamp.
+     * Used for determining equality of two subsequent batches.
+     * @return SHA-256 fingerprint.
+     */
+    public String getTimelessFingerprint(){
+        StringBuilder sb = new StringBuilder();
+        for (Sample sample : samples) {
+            sb.append(sample.toString());
         }
+        return Util.getSHA256(sb.toString());
     }
 
     public JSONObject toJSON(){

@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
+import java.util.Arrays;
+import java.util.List;
+
 import at.eht.stream.persistence.DatasetMetadataManager;
 import at.eht.stream.persistence.SampleBatchDAO;
 import at.eht.stream.model.SampleBatch;
@@ -13,6 +16,8 @@ import at.eht.stream.webservice.RequestPosterTask;
 import at.eht.stream.webservice.Response;
 import at.eht.stream.webservice.SubmitBatchRequest;
 import at.eht.stream.webservice.SubmitBatchResponse;
+import at.eht.stream.webservice.SubmitLargeBatchRequest;
+import at.eht.stream.webservice.SubmitLargeBatchResponse;
 
 /**
  * @author Markus Deutsch
@@ -55,7 +60,47 @@ public class UploadService extends Service {
         numberOfTotalUploads = SampleBatchDAO.getNumberOfBatches();
         numberOfTransmissions = 0;
         sendDataUpdatedBroadcast();
-        uploadNext();
+        uploadNextFew();
+    }
+
+    private void uploadNextFew(){
+        List<SampleBatch> sampleBatches = SampleBatchDAO.findNextFew(5);
+        if(sampleBatches == null || sampleBatches.size() < 1 || numberOfTransmissions >= numberOfTotalUploads){
+            stopSelf();
+            return;
+        }
+
+        new RequestPosterTask().execute(new SubmitLargeBatchRequest(new OnRequestCompleted() {
+            @Override
+            public void onSuccess(Response response) {
+                SubmitLargeBatchResponse batchResponse = (SubmitLargeBatchResponse) response;
+                Log.d(LOG_TAG, "Successfully transmitted batch: " + Arrays.toString(batchResponse.getBatchIds().toArray()));
+                List<String> batchIds = batchResponse.getBatchIds();
+                for (String batchId : batchIds) {
+                    if(SampleBatchDAO.deleteByHash(batchId)){
+                        errorCount = 0;
+                        numberOfTransmissions++;
+                        Log.d(LOG_TAG, "Deleting " + batchId + " OK.");
+                    } else {
+                        errorCount++;
+                        Log.e(LOG_TAG, "Deleting " + batchId + " failed.");
+                    }
+                }
+                sendDataUpdatedBroadcast();
+                uploadNextFew();
+            }
+
+            @Override
+            public void onError(Response response) {
+                errorCount++;
+                if(errorCount < maxErrorCount){
+                    uploadNextFew();
+                } else {
+                    stopSelf();
+                }
+            }
+        }, sampleBatches, DatasetMetadataManager.getInstance(this).getDatasetTitle()));
+
     }
 
     private void uploadNext(){

@@ -1,5 +1,8 @@
 package at.eht.stream;
 
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.digest.DigestUtils;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
@@ -9,12 +12,8 @@ import java.util.UUID;
  */
 public class Util {
 
-    // TODO: FIX!
-    public static String getSHA256(String input) throws NoSuchAlgorithmException {
-        //MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-        //messageDigest.update(input.getBytes());
-        //return new String(messageDigest.digest());
-        return UUID.randomUUID().toString();
+    public static String getSHA256(String input) {
+        return new String(Hex.encodeHex(DigestUtils.sha256(input)));
     }
 
     public static String getRandomString(){

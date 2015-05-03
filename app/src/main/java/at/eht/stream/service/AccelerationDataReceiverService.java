@@ -21,6 +21,7 @@ public class AccelerationDataReceiverService extends Service {
 
     PebbleKit.PebbleDataReceiver accelerationReceiver;
     String LOG_TAG = "AccelerationDataReceiverService";
+    String lastFingerprint = "";
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -50,7 +51,7 @@ public class AccelerationDataReceiverService extends Service {
             @Override
             public void receiveData(Context context, int transactionId, PebbleDictionary pebbleTuples) {
                 if(!pebbleTuples.contains(Config.KEY_COMMAND) || pebbleTuples.getInteger(Config.KEY_COMMAND) != Config.COMMAND_DATA){
-                    Log.i(LOG_TAG, "Message with invalid/no command received.");
+                    Log.e(LOG_TAG, "Message with invalid/no command received.");
                     return;
                 }
 
@@ -64,7 +65,16 @@ public class AccelerationDataReceiverService extends Service {
                 }
 
                 SampleBatch batch = new SampleBatch(samples);
-                SampleBatchDAO.insert(batch);
+                String currentFingerprint = batch.getTimelessFingerprint();
+
+                if(lastFingerprint != null && lastFingerprint.equals(currentFingerprint)){
+                    Log.w(LOG_TAG, "Duplicate samples: " + currentFingerprint);
+                } else {
+                    SampleBatchDAO.insert(batch);
+                    Log.i(LOG_TAG, "Inserted samples " + currentFingerprint);
+                }
+
+                lastFingerprint = currentFingerprint;
             }
         };
 

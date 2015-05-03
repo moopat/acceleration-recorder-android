@@ -97,6 +97,35 @@ public class SampleBatchDAO {
         return batch;
     }
 
+    public static List<SampleBatch> findNextFew(int count){
+        Cursor cursor = null;
+        SQLiteDatabase db = DatabaseOpenHelper.getInstance(context).getReadableDatabase();
+        List<SampleBatch> batches = new ArrayList<>();
+
+        cursor = db.query(
+                TABLE_NAME,
+                new String[]{FIELD_SAMPLES},
+                null,
+                null,
+                null,
+                null,
+                FIELD_TIMESTAMP + " ASC",
+                String.valueOf(count));
+
+        if(cursor.getCount() > 0) {
+            int samplesIndex = cursor.getColumnIndex(FIELD_SAMPLES);
+            cursor.moveToFirst();
+            do {
+                String sampleBatchAsJson = cursor.getString(samplesIndex);
+                batches.add(new SampleBatch(sampleBatchAsJson));
+
+                cursor.moveToNext();
+            } while(!cursor.isAfterLast());
+        }
+
+        return batches;
+    }
+
     public static List<SampleBatch> readAll() {
         Cursor cursor = null;
         SQLiteDatabase db = DatabaseOpenHelper.getInstance(context).getReadableDatabase();
