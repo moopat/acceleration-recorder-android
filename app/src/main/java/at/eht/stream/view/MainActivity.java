@@ -95,6 +95,8 @@ public class MainActivity extends ActionBarActivity {
 
                 currentText = currentText + randomString;
                 etDatasetName.setText(currentText);
+                DatasetMetadataManager.getInstance(MainActivity.this).
+                        setDatasetTitle(currentText);
             }
         });
     }
