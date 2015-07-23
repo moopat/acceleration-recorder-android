@@ -193,6 +193,11 @@ public class MainActivity extends ActionBarActivity {
         if (id == R.id.action_export) {
             exportData();
             return true;
+        } else if (id == R.id.action_delete){
+            SampleBatchDAO.init(this);
+            SampleBatchDAO.deleteAll();
+            count = (int) SampleBatchDAO.getNumberOfBatches();
+            updateCount();
         }
 
         return super.onOptionsItemSelected(item);
@@ -221,7 +226,7 @@ public class MainActivity extends ActionBarActivity {
         dataReceivedReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                count += Config.NUMBER_SAMPLES;
+                count++;
                 updateCount();
             }
         };
