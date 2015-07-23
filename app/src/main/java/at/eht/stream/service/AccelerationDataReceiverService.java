@@ -72,6 +72,7 @@ public class AccelerationDataReceiverService extends Service {
                 } else {
                     SampleBatchDAO.insert(batch);
                     Log.i(LOG_TAG, "Inserted samples " + currentFingerprint);
+                    sendBroadcast(new Intent(Config.BROADCAST_DATA_RECEIVED));
                 }
 
                 lastFingerprint = currentFingerprint;

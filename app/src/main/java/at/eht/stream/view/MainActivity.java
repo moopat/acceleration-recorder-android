@@ -18,11 +18,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.getpebble.android.kit.PebbleKit;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 
+import at.eht.stream.Config;
 import at.eht.stream.R;
 import at.eht.stream.Util;
 import at.eht.stream.persistence.DatasetMetadataManager;
@@ -39,11 +42,12 @@ public class MainActivity extends ActionBarActivity {
 
     private TextView tvSampleCount, tvProgressDescription;
     private EditText etDatasetName;
-    private Button btnUuid, btnSave;
+    private Button btnUuid, btnSave, btnStart, btnStop;
     private ProgressBar pbProgress;
     private int count;
 
     private BroadcastReceiver dataUploadedReceiver;
+    private BroadcastReceiver dataReceivedReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +67,8 @@ public class MainActivity extends ActionBarActivity {
         etDatasetName = (EditText) findViewById(R.id.etDataSetName);
         btnSave = (Button) findViewById(R.id.btnSave);
         btnUuid = (Button) findViewById(R.id.btnAddUid);
+        btnStart = (Button) findViewById(R.id.btnStart);
+        btnStop = (Button) findViewById(R.id.btnStop);
 
         updateCount();
 
@@ -99,6 +105,20 @@ public class MainActivity extends ActionBarActivity {
                         setDatasetTitle(currentText);
             }
         });
+
+        btnStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PebbleKit.startAppOnPebble(getApplicationContext(), Config.PEBBLE_UUID);
+            }
+        });
+
+        btnStop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PebbleKit.closeAppOnPebble(getApplicationContext(), Config.PEBBLE_UUID);
+            }
+        });
     }
 
     @Override
@@ -109,6 +129,7 @@ public class MainActivity extends ActionBarActivity {
         startService(pebbleServiceIntent);
 
         setupDataUploadedReceiver();
+        setupDataReceivedReceiver();
         etDatasetName.setText(DatasetMetadataManager.getInstance(this).getDatasetTitle());
     }
 
@@ -155,6 +176,7 @@ public class MainActivity extends ActionBarActivity {
     protected void onPause() {
         super.onPause();
         unregisterReceiver(dataUploadedReceiver);
+        unregisterReceiver(dataReceivedReceiver);
     }
 
     @Override
@@ -193,5 +215,16 @@ public class MainActivity extends ActionBarActivity {
             }
         };
         registerReceiver(dataUploadedReceiver, new IntentFilter(UploadService.ACTION_DATAUPLOADED));
+    }
+
+    private void setupDataReceivedReceiver(){
+        dataReceivedReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                count += Config.NUMBER_SAMPLES;
+                updateCount();
+            }
+        };
+        registerReceiver(dataReceivedReceiver, new IntentFilter(Config.BROADCAST_DATA_RECEIVED));
     }
 }

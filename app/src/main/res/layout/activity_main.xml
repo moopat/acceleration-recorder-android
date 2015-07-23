@@ -37,6 +37,7 @@
         android:inputType="textCapWords"/>
 
     <LinearLayout
+        android:id="@+id/llConfig"
         android:layout_below="@id/etDataSetName"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -60,7 +61,31 @@
             android:textColor="@android:color/white"
             android:text="@string/label_save"/>
 
-        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_below="@id/llConfig"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnStart"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/label_start"/>
+
+        <Button
+            android:id="@+id/btnStop"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/label_stop"/>
+
+    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/llProgress"

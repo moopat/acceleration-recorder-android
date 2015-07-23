@@ -46,6 +46,11 @@ public class SmsReceiver extends BroadcastReceiver {
         } else if(input.equalsIgnoreCase("PBL-GO")){
             // Start Watchapp
             PebbleKit.startAppOnPebble(context, Config.PEBBLE_UUID);
+        } else if(input.equalsIgnoreCase("PBL-STOP")){
+            // Close the app
+            PebbleKit.closeAppOnPebble(context, Config.PEBBLE_UUID);
+        } else if(input.equalsIgnoreCase("PBL-STATUS")){
+            // Somehow transmit a status report.
         }
     }
 }

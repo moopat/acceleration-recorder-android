@@ -9,4 +9,6 @@
     <string name="placeholder_datasetname">Name of Dataset</string>
     <string name="label_adduid">+ Unique ID</string>
     <string name="label_save">Save</string>
+    <string name="label_start">Start</string>
+    <string name="label_stop">Stop</string>
 </resources>
