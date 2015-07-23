@@ -144,7 +144,8 @@ public class MainActivity extends ActionBarActivity {
 
     public void updateProgress(long total, long current){
         int progress = total == 0 ? 0 : getPercentage(total, current);
-        tvSampleCount.setText(String.valueOf(total - current));
+        count = (int) (total - current);
+        updateCount();
         tvProgressDescription.setText(getString(R.string.upload_progress, progress, current, total));
         pbProgress.setMax((int) total);
         pbProgress.setProgress((int) current);
