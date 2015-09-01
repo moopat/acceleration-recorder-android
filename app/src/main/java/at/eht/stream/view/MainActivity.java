@@ -157,7 +157,7 @@ public class MainActivity extends ActionBarActivity {
 
     public void exportData(){
         try {
-            File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "acceldata");
+            File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "acceldata");
             if(!dir.exists()) dir.mkdirs();
             File outputFile = new File(dir.getAbsolutePath(), String.valueOf("accel-"+new Date().getTime()) + ".csv");
             Log.i(LOG_TAG, "Saving output to " + outputFile.getAbsolutePath());
