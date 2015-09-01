@@ -32,7 +32,7 @@ The name of the server is configured in `Config.java`. As minimum requirement it
     }
  }
 ```
-The request object holds a `datasetName` which is used to group samples that belong together and the `sampleRate` in Hz at which the samples were obtained. The request can hold an arbitrary number of sample batches. A sample batch consists of all samples that are delivered from the watchapp in a single AppMessage. The number has to be set in the watchapp as well as in `Config.NUMBER_SAMPLES`. A single sample consists of the Euclidean norm `v` (which is acquired by calculated the square root of x*x + y*y + z*z) and the values of the three axes of the accelerometer. Since x, y and z are not reported to the smartphone they are empty. A `sampleBatch` also holds the time at which is was received on the phone and a hash which is a unique identifier.
+The request object holds a `datasetName` which is used to group samples that belong together and the `sampleRate` in Hz at which the samples were obtained. The request can hold an arbitrary number of sample batches. A sample batch consists of all samples that are delivered from the watchapp in a single AppMessage. The number has to be set in the watchapp as well as in `Config.NUMBER_SAMPLES`. A single sample consists of the Euclidean norm `v` (which is acquired by calculated the square root of x^2 + y^2 + z^2) and the values of the three axes of the accelerometer. Since x, y and z are not reported to the smartphone they are empty. A `sampleBatch` also holds the time at which is was received on the phone and a hash which is a unique identifier.
 
 After successful transmission to the server the samples are deleted from the phone.
 
