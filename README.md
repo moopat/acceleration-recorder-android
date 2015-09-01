@@ -42,6 +42,9 @@ There is an option in the menu to export all data as CSV. The export does not re
 If you only need CSV export for the last few samples consider using [acceleration-stream-android](https://github.com/moopat/acceleration-stream-android) of which
 this project is a fork of.
 
+## Remote Control
+Pro-Tip: By sending a text message containing only `PBL-GO` or `PBL-UPLOAD` to the smartphone you can launch the app or start uploading data to the server.
+
 ## License
 ```
 The MIT License (MIT)
